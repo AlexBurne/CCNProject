@@ -56,13 +56,14 @@ def GameThread():
         
         pygame.draw.rect(screen, colorRect, rect1)
         
-        for moving_rect in moving_rects:
+        for i, moving_rect in enumerate(moving_rects):
             moving_rect.y += rect_speed
             if moving_rect.y > screen_height:
                 reset_moving_rect(moving_rect)
             collision = rect1.colliderect(moving_rect)
             if collision:
-                pygame.draw.rect(screen, colorRect2, moving_rect, 6, 1)
+                moving_rects.pop(i) #removes object when touched
+                moving_rects.append(create_moving_rect()) #create a new object
             else:
                 pygame.draw.rect(screen, colorRect, moving_rect, 6, 1) 
 
