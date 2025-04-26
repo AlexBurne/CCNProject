@@ -56,7 +56,7 @@ def ServerThread():
     print("printing host")
     s.close()
     print(host)
-    port = 5020  # initiate port no above 1024
+    port = 5000  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
     # look closely. The bind() function takes tuple as argument
@@ -72,16 +72,16 @@ def ServerThread():
         if not data:
             # if data is not received break
             break
-        
-        print("from connected user: " + str(data))
-        if(data == 'w'):
-            posy -= 10
-        if(data == 's'):
-            posy += 10
-        if(data == 'a'):
-            posx -= 10
-        if(data == 'd'):
-            posx += 10
+        for command in data:
+            print("from connected user: " + str(command))
+            if(command == 'w'):
+                posy -= 10
+            if(command == 's'):
+                posy += 10
+            if(command == 'a'):
+                posx -= 10
+            if(command == 'd'):
+                posx += 10
     conn.close()  # close the connection
 
 

@@ -9,7 +9,7 @@ def client_program():
     pygame.display.set_caption('Client Input Window')
 
     print("Trying to connect to server")
-    host = "192.168.1.140"
+    host = "192.168.1.102"
     port = 5000
 
     client_socket = socket.socket()
@@ -37,9 +37,9 @@ def client_program():
         if keys[pygame.K_s]:
             client_socket.send('s'.encode())
            # time.sleep(0.1)
-        clock.tick(60)
+       # clock.tick(60)
     
-        time.sleep(0.05)  # Small delay to reduce CPU usage
+        time.sleep(0.2)  # Small delay to reduce CPU usage
 
     client_socket.close()
     pygame.quit()
