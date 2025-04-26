@@ -23,6 +23,9 @@ def GameThread():
     rect_speed = 2
     num_rects = 3
     moving_rects = []
+    spawn_interval = 5000 #in milliseconds
+    spawn_interval_increment = 100
+    last_spawn_time = pygame.time.get_ticks()
 
     def create_moving_rect():
         #creates a single moving rectangle
@@ -34,9 +37,6 @@ def GameThread():
         #resets a moving rectangle
         rect.x = random.randint(0, screen_width - rect_width)
         rect.y = -rect_height
-
-    for _ in range(num_rects):
-        moving_rects.append(create_moving_rect())
 
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Welcome to CCN games')
@@ -56,14 +56,23 @@ def GameThread():
         
         pygame.draw.rect(screen, colorRect, rect1)
         
+        #spawn in moving rects
+        current_time = pygame.time.get_ticks()
+        if current_time - last_spawn_time >= spawn_interval:
+            moving_rects.append(create_moving_rect())
+            last_spawn_time = current_time
+
         for i, moving_rect in enumerate(moving_rects):
             moving_rect.y += rect_speed
             if moving_rect.y > screen_height:
-                reset_moving_rect(moving_rect)
+                moving_rects.pop(i)
             collision = rect1.colliderect(moving_rect)
             if collision:
                 moving_rects.pop(i) #removes object when touched
-                moving_rects.append(create_moving_rect()) #create a new object
+                #speeds up spawn rate until it is nearly above 0
+                if(spawn_interval > spawn_interval_increment):
+                    spawn_interval -= spawn_interval_increment
+                #moving_rects.append(create_moving_rect()) #create a new object
             else:
                 pygame.draw.rect(screen, colorRect, moving_rect, 6, 1) 
 
