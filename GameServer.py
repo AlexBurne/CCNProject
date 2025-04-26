@@ -2,6 +2,7 @@ import threading
 import pygame
 import socket
 import sys
+import random
 
 name = "test"
 posx = 300
@@ -15,8 +16,28 @@ def GameThread():
     
     fps = pygame.time.Clock()
     screen_size = screen_width, screen_height = 600, 400
-    rect2 = pygame.Rect(0, 0, 75, 75)
     rect1 = pygame.Rect(0, 0, 25, 25)
+
+    rect_width = 20
+    rect_height = 20
+    rect_speed = 2
+    num_rects = 3
+    moving_rects = []
+
+    def create_moving_rect():
+        #creates a single moving rectangle
+        x = random.randint(0, screen_width - rect_width)
+        y = -rect_height
+        return pygame.Rect(x, y, rect_width, rect_height)
+    
+    def reset_moving_rect(rect):
+        #resets a moving rectangle
+        rect.x = random.randint(0, screen_width - rect_width)
+        rect.y = -rect_height
+
+    for _ in range(num_rects):
+        moving_rects.append(create_moving_rect())
+
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Welcome to CCN games')
     
@@ -32,12 +53,19 @@ def GameThread():
 
         screen.fill(background)
         rect1.center = (posx, posy)
-        collision = rect1.colliderect(rect2)
+        
         pygame.draw.rect(screen, colorRect, rect1)
-        if collision:
-            pygame.draw.rect(screen, colorRect2, rect2, 6, 1)
-        else:
-            pygame.draw.rect(screen, colorRect, rect2, 6, 1)
+        
+        for moving_rect in moving_rects:
+            moving_rect.y += rect_speed
+            if moving_rect.y > screen_height:
+                reset_moving_rect(moving_rect)
+            collision = rect1.colliderect(moving_rect)
+            if collision:
+                pygame.draw.rect(screen, colorRect2, moving_rect, 6, 1)
+            else:
+                pygame.draw.rect(screen, colorRect, moving_rect, 6, 1) 
+
         pygame.display.update()
         fps.tick(60)
 
