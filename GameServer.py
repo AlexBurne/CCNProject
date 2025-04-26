@@ -56,7 +56,7 @@ def ServerThread():
     print("printing host")
     s.close()
     print(host)
-    port = 5000  # initiate port no above 1024
+    port = 5020  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
     # look closely. The bind() function takes tuple as argument
