@@ -7,12 +7,17 @@ import random
 name = "test"
 posx = 300
 posy = 200
+rect1_speed = 10
+
+
 
 def GameThread():
+    global rect1_speed
     pygame.init()
     background = (204, 230, 255)
     shapeColor = (0, 51, 204)
     shapeColorOver = (255, 0, 204)
+
     
     fps = pygame.time.Clock()
     screen_size = screen_width, screen_height = 600, 400
@@ -79,6 +84,8 @@ def GameThread():
                 if(spawn_interval > spawn_interval_increment):
                     spawn_interval -= spawn_interval_increment
                 
+                rect_speed += 0.1
+                rect1_speed += 0.2
                 score += 1
                 #moving_rects.append(create_moving_rect()) #create a new object
             else:
@@ -98,6 +105,7 @@ def GameThread():
 def ServerThread():
     global posy
     global posx
+    global rect1_speed
     # get the hostname
     host = socket.gethostbyname(socket.gethostname())
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -125,13 +133,13 @@ def ServerThread():
         for command in data:
             print("from connected user: " + str(command))
             if(command == 'w'):
-                posy -= 10
+                posy -= rect1_speed
             if(command == 's'):
-                posy += 10
+                posy += rect1_speed
             if(command == 'a'):
-                posx -= 10
+                posx -= rect1_speed
             if(command == 'd'):
-                posx += 10
+                posx += rect1_speed
     conn.close()  # close the connection
 
 
