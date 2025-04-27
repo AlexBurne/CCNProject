@@ -18,14 +18,19 @@ def GameThread():
     screen_size = screen_width, screen_height = 600, 400
     rect1 = pygame.Rect(0, 0, 25, 25)
 
+    #falling object variables
     rect_width = 20
     rect_height = 20
     rect_speed = 2
-    num_rects = 3
     moving_rects = []
     spawn_interval = 5000 #in milliseconds
     spawn_interval_increment = 100
     last_spawn_time = pygame.time.get_ticks()
+
+    #score variables
+    score = 0
+    font = pygame.font.Font(None, 40)
+    score_color = (0, 0, 0)
 
     def create_moving_rect():
         #creates a single moving rectangle
@@ -69,12 +74,19 @@ def GameThread():
             collision = rect1.colliderect(moving_rect)
             if collision:
                 moving_rects.pop(i) #removes object when touched
+                
                 #speeds up spawn rate until it is nearly above 0
                 if(spawn_interval > spawn_interval_increment):
                     spawn_interval -= spawn_interval_increment
+                
+                score += 1
                 #moving_rects.append(create_moving_rect()) #create a new object
             else:
-                pygame.draw.rect(screen, colorRect, moving_rect, 6, 1) 
+                pygame.draw.rect(screen, colorRect, moving_rect, 6, 1)
+
+        #display score
+        score_text = font.render(f"Score: {score}", True, score_color)
+        screen.blit(score_text, (10, 10))
 
         pygame.display.update()
         fps.tick(60)
