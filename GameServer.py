@@ -7,12 +7,14 @@ import random
 name = "test"
 posx = 300
 posy = 200
+screen_size = screen_width, screen_height = 600, 400
 rect1_speed = 10
 
 
 
 def GameThread():
     global rect1_speed
+    global screen_size
     pygame.init()
     background = (204, 230, 255)
     shapeColor = (0, 51, 204)
@@ -20,7 +22,7 @@ def GameThread():
 
     
     fps = pygame.time.Clock()
-    screen_size = screen_width, screen_height = 600, 400
+    
     rect1 = pygame.Rect(0, 0, 25, 25)
 
     #falling object variables
@@ -74,6 +76,9 @@ def GameThread():
 
         for i, moving_rect in enumerate(moving_rects):
             moving_rect.y += rect_speed
+
+            # CONDITION FOR WHEN AN OBJECT REACHES THE BOTTOM
+            # YOU CAN EDIT THIS TO CHANGE TO END THE GAME
             if moving_rect.y > screen_height:
                 moving_rects.pop(i)
             collision = rect1.colliderect(moving_rect)
@@ -106,6 +111,7 @@ def ServerThread():
     global posy
     global posx
     global rect1_speed
+    global screen_size
     # get the hostname
     host = socket.gethostbyname(socket.gethostname())
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -123,7 +129,8 @@ def ServerThread():
     # configure how many client the server can listen simultaneously
     server_socket.listen(2)
     conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))    
+    print("Connection from: " + str(address))
+    rect1_size = 25
     while True:        
         # receive data stream. it won't accept data packet greater than 1024 bytes
         data = conn.recv(1024).decode()
@@ -133,13 +140,25 @@ def ServerThread():
         for command in data:
             print("from connected user: " + str(command))
             if(command == 'w'):
-                posy -= rect1_speed
+                if(posy > 0 + rect1_speed + (rect1_size/2)):
+                    posy -= rect1_speed
+                else:
+                    posy = 0 + (rect1_size/2)
             if(command == 's'):
-                posy += rect1_speed
+                if(posy < screen_height - rect1_speed - (rect1_size/2)):
+                    posy += rect1_speed
+                else:
+                    posy = screen_height - (rect1_size/2)
             if(command == 'a'):
-                posx -= rect1_speed
+                if(posx > 0 + rect1_speed + (rect1_size/2)):
+                    posx -= rect1_speed
+                else:
+                    posx = 0 + (rect1_size/2)
             if(command == 'd'):
-                posx += rect1_speed
+                if(posx < screen_width - rect1_speed - (rect1_size/2)):
+                    posx += rect1_speed
+                else:
+                    posx = screen_width - (rect1_size/2)
     conn.close()  # close the connection
 
 
