@@ -3,14 +3,17 @@ import socket
 import time
 import sys
 
+
 def client_program():
     pygame.init()
     screen = pygame.display.set_mode((400, 300))  # Just needed to receive events
     pygame.display.set_caption('Client Input Window')
 
+
     print("Trying to connect to server")
-    host = "192.168.1.102"
+    host = "192.168.0.227"
     port = 5000
+
 
     client_socket = socket.socket()
     client_socket.connect((host, port))
@@ -21,7 +24,9 @@ def client_program():
             if event.type == pygame.QUIT:
                 running = False
 
+
         keys = pygame.key.get_pressed()
+
 
         if keys[pygame.K_q]:
             running = False
@@ -37,13 +42,15 @@ def client_program():
         if keys[pygame.K_s]:
             client_socket.send('s'.encode())
            # time.sleep(0.1)
-       # clock.tick(60)
-    
-        time.sleep(0.2)  # Small delay to reduce CPU usage
+        clock.tick(60)
+   
+        time.sleep(0.05)  # Small delay to reduce CPU usage
+
 
     client_socket.close()
     pygame.quit()
     sys.exit()
+
 
 if __name__ == '__main__':
     client_program()
