@@ -124,7 +124,7 @@ def GameThread(screen, event_queue):
             screen.blit(game_over_text, (screen_width // 2 - 150, screen_height // 2 - 50))
             screen.blit(restart_text, (screen_width // 2 - 120, screen_height // 2))
         else:
-            if score > 0:
+            if moving_rects != []:
                 reset_game()
             start_text = font.render("Press SPACE to Start", True, (0, 0, 0))
             screen.blit(start_text, (screen_width // 2 - 120, screen_height // 2))
