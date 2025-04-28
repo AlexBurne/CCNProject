@@ -10,19 +10,17 @@ posy = 200
 screen_size = screen_width, screen_height = 600, 400
 rect1_speed = 10
 
-
-
-def GameThread():
+def GameThread(screen):
     global rect1_speed
     global screen_size
-    pygame.init()
+    global posx
+    global posy
     background = (204, 230, 255)
     shapeColor = (0, 51, 204)
     shapeColorOver = (255, 0, 204)
 
-    
     fps = pygame.time.Clock()
-    
+
     rect1 = pygame.Rect(0, 0, 25, 25)
 
     #falling object variables
@@ -44,30 +42,21 @@ def GameThread():
         x = random.randint(0, screen_width - rect_width)
         y = -rect_height
         return pygame.Rect(x, y, rect_width, rect_height)
-    
+
     def reset_moving_rect(rect):
         #resets a moving rectangle
         rect.x = random.randint(0, screen_width - rect_width)
         rect.y = -rect_height
 
-    screen = pygame.display.set_mode(screen_size)
-    pygame.display.set_caption('Welcome to CCN games')
-    
     colorRect = (shapeColor)
     colorRect2 = (shapeColorOver)
-    global posx 
-    global posy 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
 
+    while True:
         screen.fill(background)
         rect1.center = (posx, posy)
-        
+
         pygame.draw.rect(screen, colorRect, rect1)
-        
+
         #spawn in moving rects
         current_time = pygame.time.get_ticks()
         if current_time - last_spawn_time >= spawn_interval:
@@ -84,11 +73,11 @@ def GameThread():
             collision = rect1.colliderect(moving_rect)
             if collision:
                 moving_rects.pop(i) #removes object when touched
-                
+
                 #speeds up spawn rate until it is nearly above 0
                 if(spawn_interval > spawn_interval_increment):
                     spawn_interval -= spawn_interval_increment
-                
+
                 rect_speed += 0.1
                 rect1_speed += 0.2
                 score += 1
@@ -102,7 +91,6 @@ def GameThread():
 
         pygame.display.update()
         fps.tick(60)
-
 
     pygame.quit()
 
@@ -120,7 +108,7 @@ def ServerThread():
     print("printing host")
     s.close()
     print(host)
-    port = 5000  # initiate port no above 1024
+    port = 5432  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
     # look closely. The bind() function takes tuple as argument
@@ -131,7 +119,7 @@ def ServerThread():
     conn, address = server_socket.accept()  # accept new connection
     print("Connection from: " + str(address))
     rect1_size = 25
-    while True:        
+    while True:
         # receive data stream. it won't accept data packet greater than 1024 bytes
         data = conn.recv(1024).decode()
         if not data:
@@ -161,10 +149,23 @@ def ServerThread():
                     posx = screen_width - (rect1_size/2)
     conn.close()  # close the connection
 
+if __name__ == "__main__": #main thread
+    pygame.init()
+    screen_size = (600, 400)
+    screen = pygame.display.set_mode(screen_size)
+    pygame.display.set_caption('Welcome to CCN games')
 
-t1 = threading.Thread(target=GameThread, args=[])
-#t1.daemon = True
-t2 = threading.Thread(target=ServerThread, args=[])
-#t2.daemon = True
-t1.start()
-t2.start()
+    t1 = threading.Thread(target=GameThread, args=(screen, ))
+    t2 = threading.Thread(target=ServerThread, args=[])
+
+    t1.start()
+    t2.start()
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+    pygame.quit()
+    sys.exit()
