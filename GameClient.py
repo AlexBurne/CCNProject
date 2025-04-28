@@ -41,6 +41,12 @@ def client_program():
         if keys[pygame.K_s]:
             client_socket.send('s'.encode())
            # time.sleep(0.1)
+        if keys[pygame.K_SPACE]:
+            client_socket.send(' '.encode())
+           # time.sleep(0.1)
+        if keys[pygame.K_r]:
+            client_socket.send('r'.encode())
+        # time.sleep(0.1)
         clock.tick(60)
    
         time.sleep(0.05)  # Small delay to reduce CPU usage
