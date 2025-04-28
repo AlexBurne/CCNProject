@@ -9,8 +9,8 @@ def client_program():
     pygame.display.set_caption('Client Input Window')
 
     print("Trying to connect to server")
-    host = "192.168.1.102"
-    port = 5000
+    host = "192.168.0.224"
+    port = 5432
 
     client_socket = socket.socket()
     client_socket.connect((host, port))
