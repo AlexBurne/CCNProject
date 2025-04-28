@@ -10,10 +10,8 @@ posy = 200
 screen_size = screen_width, screen_height = 600, 400
 rect1_speed = 10
 
-def GameThread(screen):
-rect1_speed = 15
 
-def GameThread():
+def GameThread(screen):
     global rect1_speed
     global screen_size
     global posx
@@ -50,8 +48,8 @@ def GameThread():
         rect.x = random.randint(0, screen_width - rect_width)
         rect.y = -rect_height
 
-    screen = pygame.display.set_mode(screen_size)
-    pygame.display.set_caption('Welcome to CCN games')
+    #screen = pygame.display.set_mode(screen_size)
+    #pygame.display.set_caption('Welcome to CCN games')
 
     colorRect = (shapeColor)
     colorRect2 = (shapeColorOver)
