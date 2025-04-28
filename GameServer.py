@@ -8,17 +8,23 @@ name = "test"
 posx = 300
 posy = 200
 screen_size = screen_width, screen_height = 600, 400
+rect1_speed = 10
+
+def GameThread(screen):
 rect1_speed = 15
 
 def GameThread():
     global rect1_speed
     global screen_size
-    pygame.init()
+    global posx
+    global posy
     background = (204, 230, 255)
     shapeColor = (0, 51, 204)
     shapeColorOver = (255, 0, 204)
 
+
     fps = pygame.time.Clock()
+
     rect1 = pygame.Rect(0, 0, 25, 25)
 
     rect_width = 20
@@ -33,11 +39,23 @@ def GameThread():
     font = pygame.font.Font(None, 40)
     score_color = (0, 0, 0)
 
+    def create_moving_rect():
+        #creates a single moving rectangle
+        x = random.randint(0, screen_width - rect_width)
+        y = -rect_height
+        return pygame.Rect(x, y, rect_width, rect_height)
+
+    def reset_moving_rect(rect):
+        #resets a moving rectangle
+        rect.x = random.randint(0, screen_width - rect_width)
+        rect.y = -rect_height
+
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Welcome to CCN games')
 
     colorRect = (shapeColor)
     colorRect2 = (shapeColorOver)
+
     global posx
     global posy
 
@@ -173,10 +191,25 @@ def ServerThread():
                     posx += rect1_speed
                 else:
                     posx = screen_width - (rect1_size/2)
-    conn.close()
+    conn.close()  # close the connection
 
-# Start threads
-t1 = threading.Thread(target=GameThread)
-t2 = threading.Thread(target=ServerThread)
-t1.start()
-t2.start()
+if __name__ == "__main__": #main thread
+    pygame.init()
+    screen_size = (600, 400)
+    screen = pygame.display.set_mode(screen_size)
+    pygame.display.set_caption('Welcome to CCN games')
+
+    t1 = threading.Thread(target=GameThread, args=(screen, ))
+    t2 = threading.Thread(target=ServerThread, args=[])
+
+    t1.start()
+    t2.start()
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+    pygame.quit()
+    sys.exit()
